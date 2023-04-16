@@ -1,6 +1,7 @@
 // import(s) required
 const express = require("express");
 const fs = require("fs");
+const { measureMemory } = require("vm");
 const app = express();
 const ws = require("ws");
 const server = new ws.Server({ port: 5049 });
@@ -35,18 +36,18 @@ const template = {
 };
 let players = [];
 server.on("connection", function connection(ws) {
-  const p_id = players.length - 1;
-
+  const p_id = players.length;
+  players[p_id] = template;
   ws.on("message", function incoming(message) {
     console.log("received: %s", message);
-    const data = JSON.parse(message);
-    if(data != "user"){
-    players[p_id] = template;
-    players[p_id].username = data.username;
-    players[p_id].pos = data.pos;
+    if (message != "user") {
+      const data = JSON.parse(message);
+      players[p_id] = template;
+      players[p_id].username = data.username;
+      players[p_id].pos = data.pos;
     }
 
-    ws.send(JSON.stringify({id:p_id}));
+    ws.send(JSON.stringify({ id: p_id }));
   });
   server.on("close", function close() {
     console.log(`${players[p_id].username} disconnected`);
