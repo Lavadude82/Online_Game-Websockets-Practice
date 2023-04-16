@@ -1,11 +1,16 @@
 // import(s) required
+let crypto = require('crypto');
 const express = require("express");
 const fs = require("fs");
 const { measureMemory } = require("vm");
 const app = express();
 const ws = require("ws");
-const server = new ws.Server({ port: 5049 });
-const port = 5050;
+const server = new ws.Server({ port: 5480 });
+const port = 5500;
+
+function generate_key(length) {
+  return crypto.randomBytes(length).toString('base64');
+};
 function HostDir(directory, setHTML, HTMLaltPath) {
   fs.readdirSync(__dirname + directory).forEach((e, i) => {
     if (e != "index.html") {
@@ -57,6 +62,16 @@ server.on("connection", function connection(ws) {
 
 HostDir("/web-ui/home/", true, "/");
 HostDir("/web-ui/game/", true, "/game");
+HostDir("/web-ui/signin/", true, "/signin");
+HostDir("/web-ui/signup/", true, "/signup");
+app.get("/signup/user", (req, res) => {
+  const user = req.query.user;
+  const password = req.query.pass;
+  res.send("/signin");
+});
+app.get("/signin/user", (req, res) => {
+ 
+});
 app.listen(port, () => {
   console.log(`Listening on port ${port}!`);
 });

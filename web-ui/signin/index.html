@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+          <meta charset="UTF-8">
+          <meta http-equiv="X-UA-Compatible" content="IE=edge">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Game - Sign In</title>
+</head>
+<style>
+          body,
+          html {
+                    height: 100vh;
+                    width: 100vw;
+                    margin: 0px;
+                    padding: 0px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    flex-flow: column nowrap;
+                    font-family: sans-serif;
+                    background: rgb(33, 33, 33);
+          }
+
+          input {
+                    border-radius: 5px;
+                    border: 1px solid black;
+                    padding: 7px;
+                    width: 50%;
+                    max-width: 200px;
+          }
+
+          button {
+                    background: rgb(94, 175, 255);
+                    padding: 13px;
+                    border-radius: 10px;
+                    border: none;
+          }
+
+          h2 {
+                    background: rgb(45, 135, 225);
+                    border-radius: 5px;
+                    padding: 5px;
+          }
+
+          h4 {
+                    border-radius: 5px;
+                    padding: 5px;
+                    color: rgb(94, 175, 255);
+          }
+
+          a {
+                    color: rgb(94, 175, 255);
+                    font-size: 18px;
+          }
+</style>
+
+<body>
+          <h2>Sign In</h2>
+          <h4>Username</h4>
+          <input id="user" type="text">
+          <h4>Password</h4>
+          <input id="passL" type="password">
+          <br>
+          <br>
+          <button onclick="LogUser()">Sign In</button>
+          <br>
+          <a href="/signup">Need an Account? Sign Up</a>
+
+          <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"
+                    integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg=="
+                    crossorigin="anonymous"></script>
+          <script>
+
+                    function LogUser() {
+                              let user = document.querySelector("#user").value
+                              let pass = document.querySelector("#passL").value
+                              $.ajax({
+                                        url: `http://98.184.131.233:5500/signin/user?user=${user}&pass=${btoa(pass)}`, success: function (data) {
+                                                  //console.log(JSON.parse(data))
+                                                  location.pathname = data
+                                        }
+                              })
+                    }
+          </script>
+
+</html>
