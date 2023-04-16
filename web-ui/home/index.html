@@ -6,7 +6,66 @@
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
           <title>Game - Home</title>
 </head>
+	<style>
+		*{
+			font-family:sans-serif;
+		}
+		body, html{
+			margin: 0px;
+			padding: 0px;
+			height: 100vh;
+			width: 100vw;
+			
+		}
+		body{
+			display: flex;
+			justify-content:center;
+			align-items:center;
+			flex-direction:column;
+			color: white;
+			background:rgb(33,33,33)
+		}
+		#links{
+			position: fixed; top:0px;left: 0px;;
+		}
+		#links > a{margin:10px; color:rgb(25, 162, 245)}
+		#playbtn{
+			background:rgb(25, 162, 245);
+			border-radius: 8px;
+			padding: 15px;
+			padding-left:20px;
+			padding-right:20px;
+			border:none;
+			font-size: 20px;
+			transition: filter 0.4s, padding 0.4s;
+		}
+		#playbtn:hover{
+			filter:brightness(50%);
+			padding: 20px;
+			padding-left:25px;
+			padding-right:25px;
+		}
+	</style>
 <body>
-   
+	<h1>Game Name Here</h1>
+   	<button id='playbtn'>Play</button>
+	<div id="links">
+		<br>
+	<a href="/signup">Need An Account? Sign Up</a>
+		<br>
+		<br>
+	<a href="/signin">Have An Account? Sign In</a>
+		</div>
 </body>
+<script>
+          const ws = new WebSocket("ws://192.168.0.17:5049");
+          ws.onopen = function (event) {
+  console.log("WebSocket connected");
+  ws.send("user")
+};
+ws.onmessage = function (event) {
+          console.log("requesting Data Update");
+          ws.send(JSON.stringify({username:`user${JSON.parse(event.data).id}`}))
+};
+</script>
 </html>
