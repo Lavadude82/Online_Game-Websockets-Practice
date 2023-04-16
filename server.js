@@ -56,7 +56,7 @@ let players = [];
 server.on("connection", function connection(ws) {
   const p_id = players.length;
   players[p_id] = template;
-  
+
   // handle incoming messages from the client
   ws.on("message", function incoming(message) {
     console.log("received: %s", message);
@@ -69,7 +69,7 @@ server.on("connection", function connection(ws) {
 
     ws.send(JSON.stringify({ id: p_id }));
   });
-  
+
   // handle disconnections from the WebSocket server
   server.on("close", function close() {
     console.log(`${players[p_id].username} disconnected`);
@@ -88,9 +88,24 @@ app.get("/signup/user", (req, res) => {
   // get the username and password from the query parameters
   const user = req.query.user;
   const password = req.query.pass;
+  let taken = false;
 
-  // redirect the user to the signin page
-  res.send("/signin");
+  // read and parse the contents of the accounts.db.json file
+  let JSON_DAT = JSON.parse(fs.readFileSync(__dirname + "/accounts.db.json"));
+  // test if username taken
+  JSON_DAT.forEach((e, i) => {
+    if (e.username == user) {
+      taken = true;
+    }
+  });
+  // redirect the user to the signin page if the username isn't taken
+  if (taken == true) {
+    return res.send(JSON.stringify({ error: "Username Taken" }));
+  } else {
+    JSON_DAT.push({username:user,password:password})
+    fs.writeFileSync(__dirname + "/accounts.db.json",JSON.stringify(JSON_DAT))
+    return res.send("/signin");
+  }
 });
 
 // route to handle user signin
