@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+          <meta charset="UTF-8">
+          <meta http-equiv="X-UA-Compatible" content="IE=edge">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Game - Chat</title>
+          <style>
+                    body {
+                              background: rgb(33, 33, 33);
+                    }
+
+                    #msg-input {
+                              position: fixed;
+                              bottom: 0px;
+                              right: 0px;
+                              background-color: rgb(90, 90, 90);
+                              border: none;
+                              height: 30px;
+                              font-size: 20px;
+                              padding: 5px;
+                              border-radius: 5px;
+                              margin: 5px;
+                              width: calc(100% - 100px);
+                    }
+
+                    #msg-send {
+                              position: fixed;
+                              bottom: 0px;
+                              left: 0px;
+                              background-color: rgb(90, 90, 90);
+                              border: none;
+                              font-size: 16px;
+                              height: 40px;
+                              padding: 5px;
+                              border-radius: 5px;
+                              margin: 5px;
+                              width: calc(75px);
+                    }
+
+                    #messages {
+                              background: rgb(90, 90, 90);
+                    }
+          </style>
+</head>
+
+<body>
+          <ol id="messages">
+
+          </ol>
+          <input id="msg-input" type="text"><button onclick="" id="msg-send">Send</button>
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+          const msg_list = document.getElementById("messages");
+          setInterval(() => {
+                    $.ajax({
+                              url: "http://98.184.131.233:5500/chat-recieve",
+                              success: function (data) {
+                                        JSON.parse(data).forEach((e, i) => {
+                                                  let str = `${e.user} : ${e.msg}`
+                                        });
+                              }
+                    })
+          })
+          function SendMSG() {
+                    $.ajax({
+                              url: `http://98.184.131.233:5500/chat-recieve?msg=${document.getElementById("msg-input")}&user=${localStorage.getItem("username")}&password=${localStorage.getItem("password")}`,
+                              success: function (data) {
+                                        JSON.parse(data).forEach((e, i) => {
+                                                  let str = `${e.user} : ${e.msg}`
+                                        });
+                              }
+                    })
+          }
+</script>
+
+</html>

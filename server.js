@@ -82,7 +82,7 @@ HostDir("/web-ui/home/", true, "/");
 HostDir("/web-ui/game/", true, "/game");
 HostDir("/web-ui/signin/", true, "/signin");
 HostDir("/web-ui/signup/", true, "/signup");
-
+HostDir("/web-ui/chat/", true, "/chat");
 // route to handle user signup
 app.get("/signup/user", (req, res) => {
   // get the username and password from the query parameters
@@ -102,15 +102,57 @@ app.get("/signup/user", (req, res) => {
   if (taken == true) {
     return res.send(JSON.stringify({ error: "Username Taken" }));
   } else {
-    JSON_DAT.push({username:user,password:password})
-    fs.writeFileSync(__dirname + "/accounts.db.json",JSON.stringify(JSON_DAT))
-    return res.send("/signin");
+    JSON_DAT.push({ username: user, password: password });
+    fs.writeFileSync(__dirname + "/accounts.db.json", JSON.stringify(JSON_DAT));
+    return res.send(JSON.stringify({ error: `Created ${user}!` }));
   }
 });
 
 // route to handle user signin
-app.get("/signin/user", (req, res) => {});
-
+app.get("/signin/user", (req, res) => {
+  const user = req.query.user;
+  const password = req.query.pass;
+  let userID = null;
+  let JSON_DAT = JSON.parse(fs.readFileSync(__dirname + "/accounts.db.json"));
+  JSON_DAT.forEach((e, i) => {
+    if (e.username == user && e.password == password) {
+      userID = i;
+    }
+  });
+  if (userID == null) {
+    return res.send(
+      JSON.stringify({ error: "Wrong Password or Non-Existing User" })
+    );
+  } else {
+    return res.send(
+      JSON.stringify({
+        error: `Logged in as ${user}!`,
+        username: user,
+        password: password,
+      })
+    );
+  }
+});
+app.get("/chat-recieve", (req, res) => {
+  let JSON_DAT = JSON.parse(fs.readFileSync(__dirname + "/msg.logs.json"));
+  if (req.query.msg != null && req.query.msg != undefined) {
+    let userID = null;
+    let JSON_DAT2 = JSON.parse(
+      fs.readFileSync(__dirname + "/accounts.db.json")
+    );
+    let user = req.query.user;
+    let password = req.query.password;
+    JSON_DAT2.forEach((e, i) => {
+      if (e.username == user && e.password == password) {
+        userID = i;
+      }
+    });
+    if (userID != null) {
+      JSON_DAT.push({ msg: req.query.msg, user: JSON_DAT2[userID].username });
+    }
+  }
+  res.send(JSON.stringify(JSON_DAT));
+});
 // start the Express server
 app.listen(port, () => {
   console.log(`Listening on port ${port}!`);
